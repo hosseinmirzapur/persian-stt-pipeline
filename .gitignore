@@ -1,0 +1,25 @@
+# ── Outputs ──────────────────────────────────────────────
+# Raw transcripts and polished HTML articles
+results/
+
+# ── Audio source files ───────────────────────────────────
+# Commit the voices/ directory structure but not the media
+voices/**
+!voices/.gitkeep
+
+# ── Python ───────────────────────────────────────────────
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+
+# ── Environment ──────────────────────────────────────────
+.env
+.venv/
+venv/
+
+# ── OS artifacts ─────────────────────────────────────────
+.DS_Store
+Thumbs.db
