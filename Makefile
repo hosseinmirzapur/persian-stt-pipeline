@@ -1,6 +1,6 @@
 MODEL ?= large-v3
 DEVICE ?= auto
-LANG  ?= fa
+LANG_CODE ?= fa
 DIR   ?= voices
 
 SUFFIX = $(shell python3 -c "import random,string; print(''.join(random.choices(string.ascii_lowercase, k=3)))")
@@ -20,17 +20,17 @@ help:
 	@echo 'Options (defaults):'
 	@echo '  MODEL=large-v3    Whisper model size'
 	@echo '  DEVICE=auto       Compute device (auto, cpu, cuda)'
-	@echo '  LANG=fa           Language code'
+	@echo '  LANG_CODE=fa      Language code'
 	@echo '  DIR=voices        Audio directory (for transcribe-all)'
 
 transcribe:
-	python3 transcribe.py --model $(MODEL) --device $(DEVICE) --language $(LANG) "$(FILE)" > results/$(shell basename "$(FILE)" .m4a).txt
+	python3 transcribe.py --model $(MODEL) --device $(DEVICE) --language $(LANG_CODE) "$(FILE)" > results/$(shell basename "$(FILE)" .m4a).txt
 
 batch:
-	python3 transcribe.py --model $(MODEL) --device $(DEVICE) --language $(LANG) $(FILES) > results/combined-$(SUFFIX).txt
+	python3 transcribe.py --model $(MODEL) --device $(DEVICE) --language $(LANG_CODE) $(FILES) > results/combined-$(SUFFIX).txt
 
 transcribe-all:
-	python3 transcribe.py --model $(MODEL) --device $(DEVICE) --language $(LANG) $(DIR)/* > results/combined-$(SUFFIX).txt
+	python3 transcribe.py --model $(MODEL) --device $(DEVICE) --language $(LANG_CODE) $(DIR)/* > results/combined-$(SUFFIX).txt
 
 clean:
 	rm -f results/*.txt results/*.html

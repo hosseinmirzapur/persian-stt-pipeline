@@ -168,7 +168,7 @@ Variables can be overridden:
 
 ```bash
 make transcribe FILE=voices/jalase-11.m4a DEVICE=cpu
-make transcribe-all MODEL=base LANG=fa DIR=seminars
+make transcribe-all MODEL=base LANG_CODE=fa DIR=seminars
 ```
 
 ## Workflow Example
