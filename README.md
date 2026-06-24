@@ -44,15 +44,18 @@ python transcribe.py --help
 
 ```
 .
-├── AGENTS.md                  # Agent workflow reference
-├── README.md                  # This file
-├── transcribe.py              # Speech-to-text engine
-├── .gitignore                 # Excludes audio + results from VCS
+├── AGENTS.md                      # Agent workflow reference
+├── README.md                      # This file
+├── transcribe.py                  # Speech-to-text engine
+├── .gitignore                     # Excludes audio + results from VCS
+├── .agents/
+│   └── transcript-polisher/
+│       └── SKILL.md               # Bundled skill (Step 2)
 ├── voices/
-│   └── .gitkeep               # Place .m4a / .wav / .mp3 files here
-└── results/                   # Auto-generated (gitignored)
-    ├── session-name.txt       # Raw transcription
-    └── session-name.html      # Polished article
+│   └── .gitkeep                   # Place .m4a / .wav / .mp3 files here
+└── results/                       # Auto-generated (gitignored)
+    ├── session-name.txt           # Raw transcription
+    └── session-name.html          # Polished article
 ```
 
 ## Usage
@@ -93,7 +96,8 @@ python transcribe.py voices/jalase-11.m4a > results/jalase-11.txt
 
 ### Step 2 — Polish
 
-Load the **`transcript-polisher`** skill and apply it to the raw text file.
+Load the **`transcript-polisher`** skill (bundled at
+`.agents/transcript-polisher/SKILL.md`) and apply it to the raw text file.
 The skill follows a 5-step workflow:
 
 1. **Read & catalog** — identify garbled words and audio artifacts against
@@ -163,6 +167,17 @@ results/
   Disable with `--no-vad` for continuous speech or music.
 - **Long recordings** — The script streams segments incrementally. For
   hour-long lectures, allow 10-30 minutes depending on hardware.
+
+## Included Skills
+
+### transcript-polisher
+
+Bundled at `.agents/transcript-polisher/SKILL.md`. This skill transforms raw
+speech-to-text output into print-ready RTL HTML articles. It contains the
+complete 5-step normalization workflow, a Persian ASR error reference table,
+the HTML design specification, and the quality checklist used during Step 2
+of the pipeline. The skill is versioned alongside the project so the
+polishing workflow is always in sync with the code.
 
 ## License
 
