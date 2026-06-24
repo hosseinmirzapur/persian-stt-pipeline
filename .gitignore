@@ -23,3 +23,7 @@ venv/
 # ── OS artifacts ─────────────────────────────────────────
 .DS_Store
 Thumbs.db
+
+
+# ── Local Agent artifacts ─────────────────────────────────────────
+.opencode/
