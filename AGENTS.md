@@ -107,7 +107,8 @@ python transcribe.py voices/part-1.m4a voices/part-2.m4a > results/combined-abc.
 
 # Via Make
 make transcribe FILE=voices/jalase-11.m4a
-make transcribe-all
+make transcribe-all                                # all .m4a in voices/ (default)
+make transcribe-all DIR=path/to/audio              # override directory
 
 # Polish — invoke transcript-polisher skill on results/jalase-11.txt
 # Output: results/jalase-11.html
