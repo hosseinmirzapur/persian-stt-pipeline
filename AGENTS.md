@@ -6,20 +6,31 @@ raw STT output into print-ready RTL HTML articles via the `transcript-polisher` 
 ## Directory Layout
 
 ```
-voices/         Input audio files (.m4a, .wav, etc.)
-results/        Raw transcripts (.txt) + polished articles (.html)
-transcribe.py   Transcription script (faster-whisper)
-AGENTS.md       This file
+voices/                     Input audio files (.m4a, .wav, etc.)
+results/                    Raw transcripts (.txt) + polished articles (.html)
+transcribe.py               Transcription script (faster-whisper)
+Makefile                    Build automation (transcribe, batch, clean)
+.agents/
+  transcript-polisher/
+    SKILL.md                Bundled polishing skill
+AGENTS.md                   This file
 ```
 
 ## Pipeline
 
 ### Step 1 — Transcribe
 
-Run `transcribe.py` on an audio file, piping stdout to `results/<name>.txt`.
+Run `transcribe.py` on one or more audio files, piping stdout to `results/<name>.txt`.
 
 ```bash
+# Single file
 python transcribe.py [options] voices/<name>.m4a > results/<name>.txt
+
+# Multiple files (aggregated output with file separators)
+python transcribe.py [options] voices/part-1.m4a voices/part-2.m4a > results/combined-abc.txt
+
+# Via shell glob
+python transcribe.py [options] voices/*.m4a > results/combined-xyz.txt
 ```
 
 | Option       | Default    | Description                        |
@@ -29,6 +40,15 @@ python transcribe.py [options] voices/<name>.m4a > results/<name>.txt
 | `--language` | `fa`       | Language code                      |
 | `-v`         | off        | Per-segment verbose output to stderr |
 | `--no-vad`   | off        | Disable VAD filter                 |
+
+The model is loaded **once** and reused across all files in batch mode.
+Each file's output is separated by a comment-style marker:
+
+```
+# ============================================================
+# file: voices/part-2.m4a
+# ============================================================
+```
 
 ### Step 2 — Polish (use `transcript-polisher` skill)
 
@@ -79,8 +99,15 @@ adding hyphens/underscores.
 ## Quick Start
 
 ```bash
-# Transcribe
+# Transcribe (single)
 python transcribe.py voices/jalase-11.m4a > results/jalase-11.txt
+
+# Transcribe (batch)
+python transcribe.py voices/part-1.m4a voices/part-2.m4a > results/combined-abc.txt
+
+# Via Make
+make transcribe FILE=voices/jalase-11.m4a
+make transcribe-all
 
 # Polish — invoke transcript-polisher skill on results/jalase-11.txt
 # Output: results/jalase-11.html

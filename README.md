@@ -45,6 +45,7 @@ python transcribe.py --help
 ```
 .
 ├── AGENTS.md                      # Agent workflow reference
+├── Makefile                       # Build automation
 ├── README.md                      # This file
 ├── transcribe.py                  # Speech-to-text engine
 ├── .gitignore                     # Excludes audio + results from VCS
@@ -62,10 +63,18 @@ python transcribe.py --help
 
 ### Step 1 — Transcribe
 
-Run the transcription engine on an audio file, piping stdout to a text file:
+Run the transcription engine on one or more audio files, piping stdout to a
+text file. The model is loaded **once** and reused across all files.
 
 ```bash
+# Single file
 python transcribe.py voices/session-name.m4a > results/session-name.txt
+
+# Multiple files (aggregated output with file separators)
+python transcribe.py voices/part-1.m4a voices/part-2.m4a > results/combined-xyz.txt
+
+# Via shell glob
+python transcribe.py voices/*.m4a > results/combined-xyz.txt
 ```
 
 #### Options
@@ -80,18 +89,22 @@ python transcribe.py voices/session-name.m4a > results/session-name.txt
 
 Output is written to stdout; progress and diagnostics go to stderr.
 
-#### Example
+#### Examples
 
 ```bash
+# Single file
 python transcribe.py voices/jalase-11.m4a > results/jalase-11.txt
 
-# Terminal shows:
-# Phase 1/5: Probing audio duration...
-# Phase 2/5: Detecting device...
-# Phase 3/5: Loading model large-v3 on cuda...
-# Phase 4/5: Running transcription...
-# Phase 5/5: Decoding segments...
-# Done. 142 segments, 12456 total chars.
+# Batch — all files in voices/
+python transcribe.py voices/*.m4a > results/combined-xyz.txt
+```
+
+In batch mode, each file's output is separated by a comment-style marker:
+
+```
+# ============================================================
+# file: voices/part-2.m4a
+# ============================================================
 ```
 
 ### Step 2 — Polish
@@ -136,17 +149,43 @@ The session name must be identical across all three stages — no dropped or
 added hyphens or underscores. This ensures full traceability from source
 audio to polished article.
 
-## Workflow Example
+For batch transcriptions, the output follows the pattern
+`results/combined-xyz.txt`, where the three random letters prevent name
+collisions.
+
+## Automation
+
+A `Makefile` is provided for common operations:
+
+| Command                          | Action                                         |
+|----------------------------------|------------------------------------------------|
+| `make transcribe FILE=voices/x.m4a` | Transcribe a single file                      |
+| `make batch FILES="voices/a.m4a voices/b.m4a"` | Transcribe multiple files into one combined output |
+| `make transcribe-all`            | Transcribe all `.m4a` files in `voices/`       |
+| `make clean`                     | Remove all generated text and HTML files       |
+
+Variables can be overridden:
 
 ```bash
-# Step 1: Transcribe a lecture
-python transcribe.py voices/jalase-11.m4a > results/jalase-11.txt
-
-# Step 2: Invoke the transcript-polisher skill on results/jalase-11.txt
-#         Output is saved to results/jalase-11.html
+make transcribe FILE=voices/jalase-11.m4a DEVICE=cpu
+make transcribe-all MODEL=base LANG=fa
 ```
 
-After both steps, the project looks like:
+## Workflow Example
+
+### Single file
+
+```bash
+# Via Python
+python transcribe.py voices/jalase-11.m4a > results/jalase-11.txt
+
+# Via Make (same result)
+make transcribe FILE=voices/jalase-11.m4a
+
+# Then polish — invoke transcript-polisher skill on results/jalase-11.txt
+```
+
+Result:
 
 ```
 voices/
@@ -155,6 +194,18 @@ voices/
 results/
 ├── jalase-11.txt
 └── jalase-11.html
+```
+
+### Batch
+
+```bash
+# Via Python (shell glob)
+python transcribe.py voices/*.m4a > results/combined-abc.txt
+
+# Via Make (same result)
+make transcribe-all
+
+# Then polish — invoke transcript-polisher on results/combined-abc.txt
 ```
 
 ## Tips
