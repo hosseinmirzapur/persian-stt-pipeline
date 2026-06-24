@@ -12,6 +12,21 @@ from faster_whisper import WhisperModel
 SEP = "#" + "=" * 76
 
 
+def is_audio_file(filepath):
+    """Return True if the file is a valid audio or container format."""
+    if not os.path.isfile(filepath):
+        return False
+    try:
+        result = subprocess.run(
+            ["ffprobe", "-v", "quiet", "-show_entries", "format=format_name",
+             "-of", "default=noprint_wrappers=1:nokey=1", filepath],
+            capture_output=True, text=True, timeout=10
+        )
+        return result.returncode == 0 and bool(result.stdout.strip())
+    except (subprocess.TimeoutExpired, subprocess.SubprocessError, OSError):
+        return False
+
+
 def get_audio_duration(filepath):
     try:
         result = subprocess.run(
@@ -123,6 +138,15 @@ def main():
     parser.add_argument("--no-vad", action="store_true",
                         help="Disable voice activity detection filter")
     args = parser.parse_args()
+
+    valid = [f for f in args.audio_files if is_audio_file(f)]
+    skipped = len(args.audio_files) - len(valid)
+    if skipped:
+        log(f"Skipped {skipped} non-audio file(s).")
+    if not valid:
+        log("No valid audio files to transcribe.")
+        sys.exit(1)
+    args.audio_files = valid
 
     total_files = len(args.audio_files)
     batch = total_files > 1

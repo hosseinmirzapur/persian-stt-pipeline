@@ -161,7 +161,7 @@ A `Makefile` is provided for common operations:
 |----------------------------------|------------------------------------------------|
 | `make transcribe FILE=voices/x.m4a` | Transcribe a single file                      |
 | `make batch FILES="voices/a.m4a voices/b.m4a"` | Transcribe multiple files into one combined output |
-| `make transcribe-all`            | Transcribe all `.m4a` files (default: `voices/`; override with `DIR=path`) |
+| `make transcribe-all`            | Transcribe all audio files (default: `voices/`; override with `DIR=path`) |
 | `make clean`                     | Remove all generated text and HTML files       |
 
 Variables can be overridden:

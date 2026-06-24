@@ -14,7 +14,7 @@ help:
 	@echo '  help              Show this help'
 	@echo '  transcribe        Transcribe a single file:  make transcribe FILE=voices/x.m4a'
 	@echo '  batch             Transcribe multiple files: make batch FILES="voices/a.m4a voices/b.m4a"'
-	@echo '  transcribe-all    Transcribe all .m4a in a directory: make transcribe-all [DIR=voices]'
+	@echo '  transcribe-all    Transcribe all audio files in a directory: make transcribe-all [DIR=voices]'
 	@echo '  clean             Remove all generated files from results/'
 	@echo ''
 	@echo 'Options (defaults):'
@@ -30,7 +30,7 @@ batch:
 	python3 transcribe.py --model $(MODEL) --device $(DEVICE) --language $(LANG) $(FILES) > results/combined-$(SUFFIX).txt
 
 transcribe-all:
-	python3 transcribe.py --model $(MODEL) --device $(DEVICE) --language $(LANG) $(DIR)/*.m4a > results/combined-$(SUFFIX).txt
+	python3 transcribe.py --model $(MODEL) --device $(DEVICE) --language $(LANG) $(DIR)/* > results/combined-$(SUFFIX).txt
 
 clean:
 	rm -f results/*.txt results/*.html
